@@ -10,19 +10,43 @@ export async function POST(request: Request) {
   try {
     const { text: questions } = await generateText({
       model: google("gemini-2.0-flash-001"),
-      prompt: `Prepare questions for a job interview.
-        The job role is ${role}.
-        The job experience level is ${level}.
-        The tech stack used in the job is: ${techstack}.
-        The focus between behavioural and technical questions should lean towards: ${type}.
-        The amount of questions required is: ${amount}.
-        Please return only the questions, without any additional text.
-        The questions are going to be read by a voice assistant so do not use "/" or "*" or any other special characters which might break the voice assistant.
-        Return the questions formatted like this:
-        ["Question 1", "Question 2", "Question 3"]
-        
-        Thank you! <3
-    `,
+      prompt: `Prepare a set of MBA B-School personal interview questions.
+
+Context for generating the questions:
+- The candidate’s background details are as follows:
+  Name: {{name}}
+  Undergraduate education: {{undergrad}}
+  Work experience: {{workex}}
+  Specializations or interests: {{interests}}
+  Target B-School: {{target_bschool}}
+
+Interview Style:
+- This is a real MBA admissions interview.
+- Ask a mix of behavioural, motivational, academic, and personality-based questions.
+- Avoid technical job interview questions unless relevant to the candidate’s background.
+- Keep questions crisp and conversational.
+- Avoid unnecessary jargon.
+- Ensure a natural mix of:
+    1. Profile-based questions
+    2. "Why MBA?" motivations
+    3. Leadership & teamwork questions
+    4. Ethical dilemma questions
+    5. Current affairs & business awareness questions
+    6. Stress-test / counter questions
+
+Number of questions required: {{amount}}
+
+IMPORTANT FORMATTING RULES:
+- Return ONLY the questions.
+- No extra commentary.
+- Do not include numbering like "1. 2. 3."—just plain text items.
+- Return the output strictly as a JSON array of strings, like this:
+["Question 1", "Question 2", "Question 3"]
+
+- Do not use "/" or "*" or any broken characters that may confuse a voice assistant.
+
+Thank you!
+`,
     });
 
     const interview = {
